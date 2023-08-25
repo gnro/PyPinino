@@ -37,7 +37,7 @@ def setProjectCrs():
 # noinspection PyPep8Naming
 def classFactory(iface):     
     '''  return  '''
-    ProjectCrsPlugin(iface)
+    #ProjectCrsPlugin(iface)
       
     from .CatWatch import cats
     return cats(iface)

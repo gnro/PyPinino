@@ -208,8 +208,35 @@ class cats:
         # Get the project instance
         project = QgsProject.instance()
         project.read('D:/escritorio/carto_3.qgz')
+        ifaceq=self.iface
+        
+        from qgis.PyQt.QtCore import (
+            QRectF,
+        )
+        from qgis.core import (
+            QgsProject,
+            QgsLayerTreeModel,
+        )
+        from qgis.gui import (
+            QgsLayerTreeView,
+        )
+        
+        from qgis.PyQt.QtGui import QIcon
+        icon = QIcon("icon.png")
+        ifaceq.mainWindow().setWindowIcon(icon)
+        ifaceq.mainWindow().setWindowTitle("My QGIS")
+        
+        from .MiConnect import MyMSSQL
+        ssql=MyMSSQL(ifaceq)
+        
+        ssql.agregar_capa_sql_server()
+        '''
+        from .CatCapas import carCapas
+        c= carCapas(ifaceq)
+        c.verifiCapas()
         print(project.fileName())
-                
+        '''
+        
         #pass
     
     def salir(self):
