@@ -22,22 +22,11 @@ class carCapas:
         '''
 
     def verifiCapas(self):
-        from qgis.core import Qgis
-        from qgis.core import QgsProject
-        ban=1
-        capas = ['PREDIO', 'CONSTRUCCION', 'MANZANA','CASCADA', 'MUNICIPIO']
+        capas = ['PREDIO', 'CONSTRUCCION', 'MANZANA','PREDIO_CONDOMINIO', 'MUNICIPIO']
         n=len(capas)
-        i=0
-        while (ban==1) and (n>i):
-            #self.iface.messageBar().pushMessage("Error", capas[i], level=Qgis.Critical)
-            capa=capas[i]
-            #self.iface.messageBar().pushMessage("capa: "+str(i),capa, level=Qgis.Info)
-            layer = QgsProject.instance().mapLayersByName(capa)[0]
-            
-            i=1+i
-            #self.iface.messageBar().pushMessage("Error", layer.name() , level=Qgis.Critical)
-            if (layer.name() ==''):
-                self.iface.messageBar().pushMessage("ERROr: ","Falta la capa:"+capa, level=Qgis.Critical)
-                return
-                ban=0
-            
+        from .MiConnect import MyMSSQL
+        ssql=MyMSSQL(self.iface)
+        while (n>0):
+            n=n-1
+            ssql.agregar_capa_sql_server(capas[n])            
+        self.iface.mapCanvas().refresh()
