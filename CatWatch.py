@@ -209,29 +209,13 @@ class cats:
         project = QgsProject.instance()
        # project.read('D:/escritorio/carto_3.qgz')
         ifaceq=self.iface
-        '''
-        from qgis.PyQt.QtCore import (
-            QRectF,
-        )
-        from qgis.core import (
-            QgsProject,
-            QgsLayerTreeModel,
-        )
-        from qgis.gui import (
-            QgsLayerTreeView,
-        )
-        '''
+       
         from qgis.PyQt.QtGui import QIcon
         icon = QIcon("icon.png")
-        '''
-        from .MiConnect import MyMSSQL
-        ssql=MyMSSQL(ifaceq)
-        
-        ssql.agregar_capa_sql_server()
-        '''
         from .CatCapas import carCapas
         c= carCapas(ifaceq)
-        c.verifiCapas()
+        c.limpiaCapas()
+        c.cargaCapas()
         print(project.fileName())
         
         

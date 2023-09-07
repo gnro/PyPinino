@@ -16,7 +16,6 @@ class MyMSSQL:
         self.iface.removeToolBarIcon(self.action)
 
     def agregar_capa_sql_server(self,laCapa):
-        #laCapa= "PREDIO_CONDOMINIO"
         from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsWkbTypes
         uri = QgsDataSourceUri()
         uri.setConnection("192.168.3.16", "1433", "Cartografia", "ulectura", "ulectura123")
@@ -29,4 +28,3 @@ class MyMSSQL:
             QMessageBox.critical(self.iface.mainWindow(), "Error", "No se pudo cargar la capa: '"+laCapa+"' desde SQL Server.")
             return
         QgsProject.instance().addMapLayer(capa)
-        #self.iface.mapCanvas().refresh()
