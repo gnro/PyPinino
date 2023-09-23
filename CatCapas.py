@@ -1,10 +1,4 @@
-'''
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
-from qgis.PyQt.QtWidgets import QAction
-from .CatWatch_dialog import catsDialog 
-import os.path
-'''
-from qgis.core import  QgsFillSymbol, QgsProject
+from qgis.core import  QgsFillSymbol, QgsSingleSymbolRenderer, QgsProject
 from qgis.PyQt.QtCore import *
 
 class carCapas:
@@ -16,7 +10,7 @@ class carCapas:
         self.project.removeAllMapLayers()
 
     def cargaCapas(self):
-        capas = ['CONSTRUCCION', 'PREDIO', 'MANZANA','PREDIO_CONDOMINIO', 'SUBREGION', 'MUNICIPIO']
+        capas = ['CONSTRUCCION', 'PREDIO', 'MANZANA','PREDIO_CONDOMINIO', 'REGION', 'SUBREGION', 'MUNICIPIO']
         n=len(capas)
         from .MiConnect import MyMSSQL
         ssql=MyMSSQL(self.iface)
@@ -28,23 +22,23 @@ class carCapas:
         self.stilaConst()
         layerMzn = self.project.mapLayersByName("MANZANA")[0]
         
-        self.stilaMzn(layerMzn,{'color': '#fffffee1', 'outline_color': '#ff104c91', 'outline_style': 'solid', 'outline_width': '1.5'})
-        self.labelingLayer(layerMzn, "concat('Mzn: ', MANZANA)")
+        self.stilaMzn(layerMzn,{'color': '#fffffee1', 'outline_color': '#ff104c91', 'outline_style': 'solid', 'outline_width': '1.7'})
+        self.labelingLayer(layerMzn, "concat('Mzn: ', MANZANA)", '#ff0a315d')
         
         layer = QgsProject.instance().mapLayersByName("SUBREGION")[0]
-        self.stilaMzn(layer,{'color': '#0c200066', 'outline_color': '#af4700e0', 'outline_style': 'dott', 'outline_width': '1.5'})
-        self.labelingLayer(layer, "concat('subregion: ', SUBREGION)")
+        self.stilaMzn(layer,{'color': '#094700e0', 'outline_color': '#af4700e0', 'outline_style': 'dash', 'outline_width': '0.9'})
+        self.labelingLayer(layer, "concat('subregion: ', SUBREGION)", '#ff190050')
+        
+        layer = QgsProject.instance().mapLayersByName("REGION")[0]
+        self.stilaMzn(layer,{'color': '#06364f00', 'outline_color': '#af364f00', 'outline_style': 'line', 'outline_width': '1.1'})
+        self.labelingLayer(layer, "concat('region: ', REGION)", '#ff2b3d00')
         
         layer = QgsProject.instance().mapLayersByName("MUNICIPIO")[0]
-        self.stilaMzn(layer,{'color': '#09ffffff', 'outline_color': '#c93bb6cf', 'outline_style': 'dash', 'outline_width': '1.7'})
-        self.labelingLayer(layer, "concat(municipio, ': ', NOMBRE_MUNICIPIO)")
+        self.stilaMzn(layer,{'color': '#0338acc3', 'outline_color': '#c938acc3', 'outline_style': 'dott', 'outline_width': '2.7'})
+        self.labelingLayer(layer, "concat(municipio, ': ', NOMBRE_MUNICIPIO)", '#ff216773')
         
     def agrupaCapas(self,capas):
         from qgis.core import QgsLayerTreeGroup
-        # Obtén una referencia al proyecto actual
-        #self.project = QgsProject.instance()
-        
-        # Crea o encuentra el grupo en el árbol de capas
         group_name = "Group_2"  # Cambia esto al nombre del grupo al que deseas mover la capa
         group = None
         
@@ -61,27 +55,22 @@ class carCapas:
         for capa in capas:
             layer = project.mapLayersByName(capa)[0]
             group.addLayer(layer)
-            # Actualiza el árbol de capas
-            #project.layerTreeRegistry().refreshLayerTree()
             self.removeCapa(layer)
     
-    def stilaMzn(self,        layer,simbolo):
-        from qgis.core import QgsSingleSymbolRenderer
+    def stilaMzn(self, layer, simbolo):
         fill_symbol = QgsFillSymbol.createSimple(simbolo)
         renderer = QgsSingleSymbolRenderer(fill_symbol)
-
         layer.setRenderer(renderer)
         layer.triggerRepaint()
         QgsProject.instance().addMapLayer(layer)
     
     def stilaPredio(self):
-        #self.project = QgsProject.instance()
         layer = self.project.mapLayersByName("PREDIO")[0]
-        from qgis.core import QgsSingleSymbolRenderer, QgsFillSymbolLayer, QgsStyle
+        from qgis.core import  QgsFillSymbolLayer, QgsStyle
         from qgis.core import QgsCategorizedSymbolRenderer, QgsRendererCategory
-        sym1 = QgsFillSymbol.createSimple({'color': '#3902c8ff', 'outline_color': '#ff0698ed', 'outline_style': 'solid', 'outline_width': '0.5'})
-        sym2 = QgsFillSymbol.createSimple({'color': '#ff395700', 'outline_color': '#ff232923', 'outline_style': 'solid', 'outline_width': '1.1'})
-        sym3 = QgsFillSymbol.createSimple({'color': '#ff068f91', 'outline_color': '#fff7f7f7', 'outline_style': 'solid', 'outline_width': '0.76'})
+        sym1 = QgsFillSymbol.createSimple({'color': '#3902c8ff', 'outline_color': '#ff0698ed', 'outline_style': 'solid', 'outline_width': '0.4'})
+        sym2 = QgsFillSymbol.createSimple({'color': '#ff395700', 'outline_color': '#f54e5b4e', 'outline_style': 'solid', 'outline_width': '1.0'})
+        sym3 = QgsFillSymbol.createSimple({'color': '#ff068f91', 'outline_color': '#fff7f7f7', 'outline_style': 'solid', 'outline_width': '0.7'})
         sym4 = QgsStyle.defaultStyle().symbol("hashed black X")#QgsFillSymbol.createSimple({'color': '#ff7e6363', 'outline_color': '#fff7f7f7'})
         
         # Categorized styles: declared order will be the same in the tree view
@@ -140,21 +129,22 @@ class carCapas:
         layer.triggerRepaint()
         self.iface.layerTreeView().refreshLayerSymbology(layer.id())
         
-    def labelingLayer(self,layer, cadena):
+    def labelingLayer(self,layer, cadena, _color):
         from qgis.core import QgsPalLayerSettings, QgsTextFormat, QgsVectorLayerSimpleLabeling
         from PyQt5.QtGui import QFont, QColor
+        from qgis.core import QgsTextFormat
         #layer = self.project.mapLayersByName(capa)[0]
         
         settings = QgsPalLayerSettings()
         txt_format = QgsTextFormat()
         txt_format.setFont(QFont('PT SANS'))
         txt_format.setSize(19)  # Tamaño de fuente predeterminado
-        color = QColor('#ff001a24' )
+        color = QColor(_color)
         txt_format.setColor(color)
         txt_format.mask().setEnabled(True)
         settings.setFormat(txt_format)
         settings.fieldName = cadena
-        settings.placement = QgsPalLayerSettings.Line
+        settings.placement = QgsPalLayerSettings.OverPoint
         settings.drawLabels = True
         settings.enabled = True  # Habilita el etiquetado
         labels = QgsVectorLayerSimpleLabeling(settings)

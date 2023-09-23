@@ -31,19 +31,8 @@ from .resources import *
 from .CatWatch_dialog import catsDialog 
 import os.path
 
-
 class cats:
-    """QGIS Plugin Implementation."""
-
     def __init__(self, iface):
-        """Constructor.
-
-        :param iface: An interface instance that will be passed to this class
-            which provides the hook by which you can manipulate the QGIS
-            application at run time.
-        :type iface: QgsInterface
-        """
-        # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -69,19 +58,8 @@ class cats:
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-
-        We implement this ourselves since we do not inherit QObject.
-
-        :param message: String for translation.
-        :type message: str, QString
-
-        :returns: Translated version of message.
-        :rtype: QString
-        """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('cats', message)
-
 
     def add_action(
         self,
@@ -94,44 +72,7 @@ class cats:
         status_tip=None,
         whats_this=None,
         parent=None):
-        """Add a toolbar icon to the toolbar.
 
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
         self.dlg=catsDialog()
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -152,14 +93,10 @@ class cats:
             self.iface.addPluginToMenu(
                 self.menu,
                 action)
-
         self.actions.append(action)
-
         return action
 
     def initGui(self):
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
         icon_path = ':/plugins/CatWatch/icon.png'
         self.add_action(
             icon_path,
@@ -170,8 +107,7 @@ class cats:
         # will be set False in run()
         #self.first_start = True
         self.dlg.pushButton.clicked.connect(self.accede)
-        self.dlg.pushButtonS.clicked.connect(self.salir)
-        
+        self.dlg.pushButtonS.clicked.connect(self.salir)  
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -181,29 +117,56 @@ class cats:
                 action)
             self.iface.removeToolBarIcon(action)
 
-
     def run(self):
         """Run method that performs all the real work"""
         
-        self.dlg.qTxtPasswd.clear()
-        self.dlg.qTxtUser.clear()
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
+        #self.dlg.qTxtPasswd.clear()
+        self.dlg.qTxtUser.setText("gjimenez")
+        #self.dlg.qTxtUser.clear()
         if self.first_start == True:
             self.first_start = False
             self.dlg = catsDialog()
 
         # show the dialog
         self.dlg.show()
-        # Run the dialog event loop
         result = self.dlg.exec_()
-        # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
             pass
-
+    
+    def handle_error(error):
+        print(f'Error: {error}')
+    
+    def handle_response(self, response):
+        # Manejar la respuesta aquí
+        if response.error() == QNetworkReply.NoError:
+            # La solicitud se completó correctamente
+            data = response.readAll()
+            # Procesar la respuesta JSON u otros datos aquí
+            print(data)
+        else:
+            # Hubo un error en la solicitud
+            self.handle_error(response.errorString())
+    
     def accede(self):
+        try:
+            from .ApiRequests import carCapas
+            rrr=carCapas("")
+            passWd = self.dlg.qTxtPasswd.text()
+            userS = self.dlg.qTxtUser.text()
+            data = {
+                "usuario":userS,
+                "passwd": passWd,
+                "verssion": 1,
+                "sistema": "GEO"
+            }
+            #rrr.consumeGet("Gusanito")
+            response_data=rrr.consumePost("initSesion", data)
+            print(response_data)
+            
+        except Exception as e:
+            print(f'Error al realizar la accede: {str(e)}')
+        
+        
         from qgis.core import QgsProject
         # Get the project instance
         project = QgsProject.instance()
@@ -211,17 +174,17 @@ class cats:
         ifaceq=self.iface
        
         from qgis.PyQt.QtGui import QIcon
-        icon = QIcon("icon.png")
+        icon = QIcon(":/plugins/CatWatch/icon.png")
         from .CatCapas import carCapas
         c= carCapas(ifaceq)
         c.limpiaCapas()
         c.cargaCapas()
         print(project.fileName())
-        
-        
         ifaceq.mainWindow().setWindowTitle("My QGIS")
         ifaceq.mainWindow().setWindowIcon(icon)
-        #pass
+        self.dlg.hide()
+        pass
     
     def salir(self):
         pass
+    

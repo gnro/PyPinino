@@ -8,7 +8,7 @@ class MyMSSQL:
         self.iface = iface
 
     def initGui(self):
-        self.action = QAction(QIcon("ruta_al_icono.png"), "Agregar Capa SQL Server", self.iface.mainWindow())
+        self.action = QAction(QIcon("icon.png"), "Agregar Capa SQL Server", self.iface.mainWindow())
         self.action.triggered.connect(self.agregar_capa_sql_server)
         self.iface.addToolBarIcon(self.action)
 
