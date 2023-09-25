@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-
+from PyQt5.QtWidgets import QMessageBox
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
@@ -122,7 +122,7 @@ class cats:
         
         #self.dlg.qTxtPasswd.clear()
         self.dlg.qTxtUser.setText("gjimenez")
-        #self.dlg.qTxtUser.clear()
+        self.dlg.qTxtPasswd.setText("123")
         if self.first_start == True:
             self.first_start = False
             self.dlg = catsDialog()
@@ -160,13 +160,20 @@ class cats:
                 "sistema": "GEO"
             }
             #rrr.consumeGet("Gusanito")
-            response_data=rrr.consumePost("initSesion", data)
-            print(response_data)
+            datos_diccionario = rrr.consumePost("initSesion", data)
+            print(datos_diccionario["mensaje"])
             
+            if (datos_diccionario["mensaje"]!='Inicio de sesión correcta'):
+                QMessageBox.critical(self.iface.mainWindow(), "Error", "Usuario o contraseña incorrecta.")
+                self.dlg.qTxtPasswd.clear()
+                self.dlg.qTxtUser.clear()
+                return
+            else:
+                self.cargaLayer()
         except Exception as e:
             print(f'Error al realizar la accede: {str(e)}')
         
-        
+    def cargaLayer(self):
         from qgis.core import QgsProject
         # Get the project instance
         project = QgsProject.instance()

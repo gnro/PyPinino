@@ -3,7 +3,7 @@ import requests
 # Define the URL you want to request
 class carCapas:
     def __init__(self, url):
-        url = "http://localhost:5034/api/sparkle/"
+        url = "http://192.168.1.147:8080/api/sparkle/"
         self.url = url
     
     def consumeGet(self,endPoint):
