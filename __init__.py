@@ -22,34 +22,53 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
- 
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtCore import *
 from qgis.gui import QgsProjectionSelectionDialog
+from qgis.core import QgsProject  # Importa QgsProject desde qgis.core
 
+valorD = ""
 
 def setProjectCrs():
-    dialog = QgsProjectionSelectionDialog()
-    if dialog.exec_():
-        crs = dialog.crs()
-        QgsProject.instance().setCrs(crs)
+    global valorD
+    valorD = QgsProject.instance().fileName()
+    print(f'El archivo es: {str(valorD)}')
 
 # noinspection PyPep8Naming
-def classFactory(iface):     
+def classFactory(iface):
     '''  return  '''
-    #ProjectCrsPlugin(iface)
-      
+    global valorD
+    print("EL valor es:")
+    ProjectCrsPlugin(iface)
+    
+    print("EL valor es:"+str(valorD))
     from .CatWatch import cats
-    return cats(iface)
+    if valorD=="":
+        valorD="Vaciooooo"
+    return cats(iface,str(valorD) )
 
- 
 class ProjectCrsPlugin:
     def __init__(self, iface):
-        self.iface = iface        
-        iface.newProjectCreated.connect(setProjectCrs)
- 
+        try:
+            #iface.projectRead.connect(self.setProject)
+            
+            print("Holaaaaa")
+            iface.projectRead.connect(setProjectCrs)
+            print("Byeeeeeee")
+            '''
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.critical(self.iface.mainWindow(), "Error", "Usuario.: Ya "+fue)
+            '''
+        except Exception as e:
+            print(f'Error al realizar la accede: {str(e)}')
+
     def initGui(self):
         pass
- 
+
     def unload(self):
-        self.iface.newProjectCreated.disconnect(setProjectCrs)
+        self.iface.newProjectCreated.disconnect(setProjectCrs)  # Cambia esto para desconectar la señal correctamente
+    
+    def setProject(self):
+        global valorD
+        valorD = QgsProject.instance().fileName()
+        print(f'El archivo es: {str(valorD)}')

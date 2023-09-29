@@ -30,9 +30,12 @@ from .resources import *
 # Import the code for the dialog
 from .CatWatch_dialog import catsDialog 
 import os.path
+valorD = "-"
 
 class cats:
-    def __init__(self, iface):
+    def __init__(self, iface,ddd):
+        global valorD
+        valorD=ddd
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -119,7 +122,8 @@ class cats:
 
     def run(self):
         """Run method that performs all the real work"""
-        
+        global valorD
+        print(valorD)
         #self.dlg.qTxtPasswd.clear()
         self.dlg.qTxtUser.setText("gjimenez")
         self.dlg.qTxtPasswd.setText("123")
@@ -183,13 +187,16 @@ class cats:
         from qgis.PyQt.QtGui import QIcon
         icon = QIcon(":/plugins/CatWatch/icon.png")
         from .CatCapas import carCapas
-        c= carCapas(ifaceq)
+        c = carCapas(ifaceq)
         c.limpiaCapas()
         c.cargaCapas()
-        print(project.fileName())
         ifaceq.mainWindow().setWindowTitle("My QGIS")
         ifaceq.mainWindow().setWindowIcon(icon)
         self.dlg.hide()
+        
+        from .EdiCarto.toolsEdiCarto import MyBtn
+        b=MyBtn()
+        
         pass
     
     def salir(self):
