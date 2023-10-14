@@ -195,7 +195,7 @@ class cats:
         self.dlg.hide()
         
         from .EdiCarto.toolsEdiCarto import MyBtn
-        b=MyBtn()
+        b=MyBtn(ifaceq)
         
         pass
     

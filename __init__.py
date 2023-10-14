@@ -32,13 +32,12 @@ valorD = ""
 def setProjectCrs():
     global valorD
     valorD = QgsProject.instance().fileName()
-    print(f'El archivo es: {str(valorD)}')
+    print(f'setProjectCrs; El archivo es: {str(valorD)}')
 
 # noinspection PyPep8Naming
 def classFactory(iface):
     '''  return  '''
     global valorD
-    print("EL valor es:")
     ProjectCrsPlugin(iface)
     
     print("EL valor es:"+str(valorD))
@@ -51,10 +50,8 @@ class ProjectCrsPlugin:
     def __init__(self, iface):
         try:
             #iface.projectRead.connect(self.setProject)
-            
-            print("Holaaaaa")
             iface.projectRead.connect(setProjectCrs)
-            print("Byeeeeeee")
+            print("Se cargo el plugin")
             '''
             from PyQt5.QtWidgets import QMessageBox
             QMessageBox.critical(self.iface.mainWindow(), "Error", "Usuario.: Ya "+fue)
