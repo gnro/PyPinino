@@ -39,30 +39,28 @@ class MyBtn:
         from qgis.PyQt.QtWidgets import QAction
         from qgis.core import QgsApplication
         """Create the menu & tool bar items within QGIS"""
-        icon = QIcon(     os.path.join(os.path.dirname(os.path.abspath(__file__)), "e.png"))
+        icon = QIcon(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e.png"))
         #icon = QIcon(os.path.dirname(__file__) + "/icon.png")
         self.kmlAction = QAction(icon, "Import KML/KMZ", self.iface.mainWindow())
         self.kmlAction.triggered.connect(self.show_custom_dialog)
         self.kmlAction.setCheckable(False)
         self.iface.addToolBarIcon(self.kmlAction)
+
         self.iface.addPluginToVectorMenu("KML Tools", self.kmlAction)
         # Expansion of HTML description field
-        icon = QIcon(     os.path.join(os.path.dirname(os.path.abspath(__file__)), "e2.png"))
+        icon = QIcon(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e2.png"))
         self.htmlDescAction = QAction(icon, "Expand HTML description field", self.iface.mainWindow())
         self.htmlDescAction.triggered.connect(self.show_custom_dialog)
         self.htmlDescAction.setCheckable(False)
         self.iface.addToolBarIcon(self.htmlDescAction)
         self.iface.addPluginToVectorMenu("KML Tools", self.htmlDescAction)
         # Help
-        icon = QIcon(     os.path.join(os.path.dirname(os.path.abspath(__file__)), "e.png"))
+        icon = QIcon(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e.png"))
         self.helpAction = QAction(icon, "Help", self.iface.mainWindow())
         self.htmlDescAction.setCheckable(False)
         self.helpAction.triggered.connect(self.show_custom_dialog)
         self.iface.addPluginToVectorMenu('KML Tools', self.helpAction)
 
-        # Add the processing provider
-    
-    
 
 from qgis.PyQt.QtWidgets import QDialog, QVBoxLayout, QPushButton, QLabel
 from qgis.utils import iface  

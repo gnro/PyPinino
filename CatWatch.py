@@ -166,7 +166,6 @@ class cats:
             #rrr.consumeGet("Gusanito")
             datos_diccionario = rrr.consumePost("initSesion", data)
             print(datos_diccionario["mensaje"])
-            
             if (datos_diccionario["mensaje"]!='Inicio de sesión correcta'):
                 QMessageBox.critical(self.iface.mainWindow(), "Error", "Usuario o contraseña incorrecta.")
                 self.dlg.qTxtPasswd.clear()

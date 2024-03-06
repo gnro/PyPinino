@@ -27,35 +27,48 @@ from qgis.PyQt.QtCore import *
 from qgis.gui import QgsProjectionSelectionDialog
 from qgis.core import QgsProject  # Importa QgsProject desde qgis.core
 
-valorD = ""
+valorD = "-"
 
 def setProjectCrs():
-    global valorD
     valorD = QgsProject.instance().fileName()
-    print(f'setProjectCrs; El archivo es: {str(valorD)}')
+
+def setProjectCrs(iface):
+    classFactory(iface, valorD)
 
 # noinspection PyPep8Naming
 def classFactory(iface):
+    
+    from .CatWatch import cats
     '''  return  '''
-    global valorD
+    #global valorD
     ProjectCrsPlugin(iface)
     
-    print("EL valor es:"+str(valorD))
-    from .CatWatch import cats
-    if valorD=="":
-        valorD="Vaciooooo"
-    return cats(iface,str(valorD) )
+    #print("EL valor es:")
+    #print(f'setProjectCrs; El archivo es: {str(valorD)}')
+    #print(" classFactory")
+    #if valorD=="":
+    #    valorD="VaciAAAAAo"
+    return cats(iface,str(QgsProject.instance().fileName() ) )
 
 class ProjectCrsPlugin:
     def __init__(self, iface):
         try:
+            
+            print("EL valor es:"+QgsProject.instance().fileName())
             #iface.projectRead.connect(self.setProject)
-            iface.projectRead.connect(setProjectCrs)
+            iface.projectRead.connect(setProjectCrs(iface))
             print("Se cargo el plugin")
             '''
             from PyQt5.QtWidgets import QMessageBox
             QMessageBox.critical(self.iface.mainWindow(), "Error", "Usuario.: Ya "+fue)
             '''
+            
+            from qgis.core import QgsProject
+            print(str(QgsProject.instance().fileName())) 
+            toolbar = QToolBar('Main ToolBar')
+            # File toolbar
+            fileToolBar = self.addToolBar(toolbar )
+            fileToolBar.setMovable(True)
         except Exception as e:
             print(f'Error al realizar la accede: {str(e)}')
 
@@ -66,6 +79,6 @@ class ProjectCrsPlugin:
         self.iface.newProjectCreated.disconnect(setProjectCrs)  # Cambia esto para desconectar la señal correctamente
     
     def setProject(self):
-        global valorD
+        valorD
         valorD = QgsProject.instance().fileName()
         print(f'El archivo es: {str(valorD)}')
